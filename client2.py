@@ -41,9 +41,17 @@ def receive():
 font_win = font.Font(None, 72)
 font_main = font.Font(None, 36)
 # --- ЗОБРАЖЕННЯ ----
-
+bg_image = image.load("images/table-tennis.png")
+bg_image = transform.scale(bg_image, (WIDTH, HEIGHT))
+ball_image = image.load("images/fdghj.png")
+ball_image = transform.scale(ball_image, (20, 20))
 # --- ЗВУКИ ---
+mixer.music.load("museam/pacman background music.ogg")
+mixer.music.set_volume(0.5)
+mixer.music.play(-1)
 
+ball_platform_sound = mixer.Sound("museam/pingpongboard.ogg")
+ball_platform_sound.set_volume(2)
 # --- ГРА ---
 game_over = False
 winner = None
@@ -88,20 +96,22 @@ while True:
         continue  # Блокує гру після перемоги
 
     if game_state:
-        screen.fill((30, 30, 30))
+        # screen.fill((30, 30, 30))
+        screen.blit(bg_image, (0, 0))
         draw.rect(screen, (0, 255, 0), (20, game_state['paddles']['0'], 20, 100))
         draw.rect(screen, (255, 0, 255), (WIDTH - 40, game_state['paddles']['1'], 20, 100))
-        draw.circle(screen, (255, 255, 255), (game_state['ball']['x'], game_state['ball']['y']), 10)
+        # draw.circle(screen, (255, 255, 255), (game_state['ball']['x'], game_state['ball']['y']), 10)
+        screen.blit(ball_image, (game_state['ball']['x'], game_state['ball']['y']))
         score_text = font_main.render(f"{game_state['scores'][0]} : {game_state['scores'][1]}", True, (255, 255, 255))
         screen.blit(score_text, (WIDTH // 2 -25, 20))
 
         if game_state['sound_event']:
             if game_state['sound_event'] == 'wall_hit':
                 # звук відбиття м'ячика від стін
-                pass
+                ball_platform_sound.play()
             if game_state['sound_event'] == 'platform_hit':
                 # звук відбиття м'ячика від платформи
-                pass
+                ball_platform_sound.play()
 
     else:
         wating_text = font_main.render(f"Очікування гравців...", True, (255, 255, 255))
